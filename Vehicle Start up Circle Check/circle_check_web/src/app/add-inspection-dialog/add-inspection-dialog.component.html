@@ -1,0 +1,124 @@
+<h2 mat-dialog-title>
+  <span class="w-full flex justify-center">
+    {{ data?.vehicleId ? "Edit" : "Add New" }} Vehicle Inspection
+  </span>
+</h2>
+<form [formGroup]="circleCheckForm">
+  <div mat-dialog-content>
+    <div class="m-auto w-full flex flex-col">
+      <mat-form-field>
+        <mat-label>Vehicle or Equipment Inspected</mat-label>
+        <input
+          type="text"
+          placeholder="Pick one"
+          aria-label="Number"
+          matInput
+          formControlName="vehicleId"
+          [matAutocomplete]="vehicleAuto"
+        />
+        <mat-autocomplete #vehicleAuto="matAutocomplete">
+          <!-- TODO: -->
+          <mat-option *ngFor="let option of vehicles" [value]="option.name">
+            {{ option.name }}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error
+          *ngIf="circleCheckForm.get('vehicleId')?.hasError('required')"
+        >
+          This field is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Choose a date</mat-label>
+        <input
+          matInput
+          formControlName="date"
+          [matDatepicker]="datepicker"
+          [min]="minDate"
+        />
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="datepicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #datepicker> </mat-datepicker>
+        <mat-error *ngIf="circleCheckForm.get('date')?.hasError('required')">
+          This field is required
+        </mat-error>
+      </mat-form-field>
+      <br />
+
+      <mat-form-field>
+        <mat-label>Odometer</mat-label>
+        <input matInput formControlName="odometer" type="number" />
+        <mat-error
+          *ngIf="circleCheckForm.get('odometer')?.hasError('required')"
+        >
+          This field is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Operator</mat-label>
+
+        <input
+          type="text"
+          placeholder="Pick one"
+          aria-label="Number"
+          matInput
+          formControlName="operator"
+          [matAutocomplete]="auto"
+        />
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let option of operators" [value]="option.name">
+            {{ option.name }}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error
+          *ngIf="circleCheckForm.get('operator')?.hasError('required')"
+        >
+          This field is required
+        </mat-error>
+      </mat-form-field>
+
+      <br />
+
+      <ng-container *ngFor="let c of questions?.controls; let i = index">
+        <!-- TODO: check id -->
+        <div class="flex" [formGroup]="c">
+          <mat-radio-group [formControl]="c.get('answer')">
+            <mat-radio-button [value]="true">OK </mat-radio-button>
+            <mat-radio-button [value]="false">Not OK </mat-radio-button>
+          </mat-radio-group>
+          <label class="ml-6" [id]="elementsToBeVerified[i].id">{{
+            elementsToBeVerified[i].label
+          }}</label>
+        </div>
+      </ng-container>
+
+      <br />
+      <mat-form-field class="example-full-width">
+        <mat-label>Additional Notes:</mat-label>
+        <textarea
+          matInput
+          placeholder="Ex. Brakes looks good but..."
+          formControlName="notes"
+        ></textarea>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div mat-dialog-actions align="center">
+    <button mat-raised-button mat-dialog-close>Cancel</button>
+    <button
+      mat-raised-button
+      type="submit"
+      (click)="submit()"
+      color="primary"
+      [disabled]="circleCheckForm.invalid"
+    >
+      Submit
+    </button>
+  </div>
+</form>
